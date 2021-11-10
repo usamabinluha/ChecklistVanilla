@@ -1,0 +1,58 @@
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  margin: auto;
+  width: 600px;
+}
+
+.header-title {
+  justify-content: center;
+  display: flex;
+}
+
+.students-list {
+  padding-inline-start: unset;
+}
+
+.student-item {
+  display: flex;
+  margin: 20px 0;
+  border-left: 5px solid #ddd;
+  padding-left: 20px;
+}
+
+.student-item:hover {
+  border-color: green;
+}
+
+.name {
+  flex: 1;
+  align-self: center;
+  cursor: pointer;
+}
+
+.delete {
+  background-color: red;
+  padding: 5px;
+  color: white;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.form {
+  display: flex;
+  justify-content: center;
+}
+
+.input {
+  padding: 7px 0 7px 7px;
+}
+
+.add-button {
+  background-color: green;
+  color: white;
+  padding: 5px;
+  border: unset;
+  cursor: pointer;
+  border-radius: 0 3px 3px 0;
+}
