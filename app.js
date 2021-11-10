@@ -1,9 +1,11 @@
 
 document.addEventListener('DOMContentLoaded', () => {
 
-  const localStore = {}  
+  const store = {}  
   let keys = []
   let id = 0
+
+  const inputText = document.querySelector('input[type="text"]')
 
   const list = document.querySelector('.students-list')
   list.addEventListener('click', onListItemClick)
@@ -43,46 +45,36 @@ document.addEventListener('DOMContentLoaded', () => {
 
     event.preventDefault()
       
-    const li = document.createElement('li')
-    
     const name = document.createElement('span')
-    const button = document.createElement('span')
-    
-    const value = document.querySelector('input[type="text"]').value
+    const value = inputText.value
     name.textContent = value
+    name.classList.add('name')
+    
+    const button = document.createElement('span')
     button.textContent = 'Delete'
+    button.classList.add('delete')
+    
+    const li = document.createElement('li')
+    li.classList.add('student-item')
+    li.appendChild(name)
+    li.appendChild(button)
+    list.appendChild(li)
 
+    inputText.value = ''
     keys.push(id)
     updateStoreIDs()
     localStorage.setItem(id + '', value)
-    
-    li.classList.add('student-item')
-    name.classList.add('name')
-    button.classList.add('delete')
-    
-    li.appendChild(name)
-    li.appendChild(button)
-  
-    list.appendChild(li)
-    document.querySelector('input[type="text"]').value = ''
     addDom(li, id)
     id++
   
   }
 
   function getID(dom) {
-    return localStore[dom]
+    return store[dom]
   }
 
   function updateStoreIDs () {
     localStorage.setItem('student_ids', JSON.stringify(keys))
-  }
-
-  function removeID(dom) {
-    const key = getID(dom)
-    localStorage.removeItem(key + '')
-    keys.splice(key, 1)
-    delete localStore[dom]
   }
 
   function initListItem(key) {
@@ -109,19 +101,25 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function addDom(dom, id) {
-    localStore[dom] = id
+    store[dom] = id
   }
 
   function onDelete (event) {
     const li = event.target.parentElement;
     li.parentNode.removeChild(li)
-    removeID(li)
+
+    const key = getID(li)
+    localStorage.removeItem(key + '')
+    keys.splice(key, 1)
     updateStoreIDs()
+
+    delete store[li]
   }
 
   function onEdit (event) {
     const name = event.target.textContent
-      document.querySelector('input[type="text"]').value = name
+      inputText.value = name
+      inputText.focus()
       addButton.textContent = 'Save'
 
       addButton.removeEventListener('click', onAdd)
@@ -129,11 +127,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
       function onSave(onSaveEvent) {
         onSaveEvent.preventDefault()
-        event.target.textContent = document.querySelector('input[type="text"]').value
+        event.target.textContent = inputText.value
         addButton.removeEventListener('click', onSave)
         addButton.addEventListener('click', onAdd)
         addButton.textContent = 'Add'
-        document.querySelector('input[type="text"]').value = ''
+        inputText.value = ''
 
         const id = getID(event.target.parentNode)
         localStorage.setItem(id, event.target.textContent)
