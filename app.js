@@ -1,11 +1,37 @@
-let id              = 0;
-let ids             = [];
-const addButton     = document.querySelector('.add-button');
-const inputText     = document.querySelector('.input');
-const listContainer = document.querySelector('.list-container');
+let id                = 0;
+let ids               = [];
+const addButton       = document.querySelector('.add-button');
+const inputText       = document.querySelector('.input');
+const listContainer   = document.querySelector('.list-container');
+const headerContainer = document.querySelector('.header');
+const header          = getTemplate('header-template').querySelector('#header');
+const editableHeader  = getTemplate('editable-header-template').querySelector('#editable-header');
+const editable        = editableHeader.querySelector('.header-title-input');
 
-const domStore      = {}
+const domStore        = {}
+let title             = ''
 let onSave;
+
+resumeState()
+
+header.textContent = title;
+headerContainer.appendChild(header);
+
+headerContainer.addEventListener('dblclick', () => {
+  headerContainer.removeChild(header);
+  editable.value = header.textContent;
+  headerContainer.appendChild(editableHeader);
+  editable.select()
+  editableHeader.addEventListener('keyup', (event) => {
+    if(event.keyCode === 13){
+      event.preventDefault()
+      header.textContent = editable.value;
+      localStorage.setItem('title', editable.value)
+      headerContainer.appendChild(header);
+      headerContainer.removeChild(editableHeader);
+    }
+  })
+})
 
 inputText.focus()
 
@@ -19,8 +45,6 @@ function onAdd (event) {
 }
 
 addButton.addEventListener('click', onAdd)
-
-resumeState()
 
 function onDelete (id) {
   deleteItem(id);
@@ -89,5 +113,9 @@ function resumeState () {
       addItem(id, listItem);
     });
     id = ids.length ? ids[ids.length - 1] : 0
+  }
+
+  if(localStorage.getItem('title')){
+    title = localStorage.getItem('title');
   }
 }

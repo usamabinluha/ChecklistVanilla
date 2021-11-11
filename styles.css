@@ -5,7 +5,23 @@
   width: 600px;
 }
 
+.header {
+  margin-top: 10px;
+}
+
 .header-title {
+  font-size: 32px;
+  font-family: sans-serif;
+  justify-content: center;
+  display: flex;
+}
+
+.header-title-input {
+  font-size: 32px;
+  text-align: center;
+}
+
+#editable-header {
   justify-content: center;
   display: flex;
 }
