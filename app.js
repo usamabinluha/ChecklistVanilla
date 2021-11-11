@@ -31,7 +31,7 @@ function resumeState () {
   }
 
   initTitle()
-  inputText.focus()
+  inputText.select()
 }
 
 function initTitle () {
@@ -97,7 +97,7 @@ addButton.addEventListener('click', onAdd)
 
 function onDelete (id) {
   deleteItem(id);
-  inputText.focus();
+  inputText.select();
   saveState()
 }
 
@@ -107,10 +107,28 @@ function onEdit (id) {
     onSaveCallback(event, id)
   }
   addButton.addEventListener('click', onSave)
+  inputText.addEventListener('blur', onBlur)
   addButton.textContent = 'Save'
   const listItem        = domStore[id]
   inputText.value       = listItem.getName()
-  inputText.focus()
+  inputText.select()
+}
+
+function onBlur () {
+  new Promise((resolve) => {
+    document.addEventListener('click', remove)
+    function remove (event) {
+      if(event.target.className !== 'name'){
+        resolve()
+      }
+      document.removeEventListener('click', remove)
+    }
+  }).then(() => {
+    inputText.value       = ''
+    addButton.textContent = 'Add'
+  })
+  addButton.removeEventListener('click', onSave)
+  addButton.addEventListener('click', onAdd)
 }
 
 function onSaveCallback (event, id) {

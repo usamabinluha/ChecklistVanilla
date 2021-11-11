@@ -1,3 +1,13 @@
+body {
+  background-color: darkslateblue;
+  color: white;
+}
+
+.input::placeholder {
+  color: lightgray;
+  color: #a4a4a4;
+}
+
 .wrapper {
   display: flex;
   flex-direction: column;
@@ -22,6 +32,17 @@
 .header-title-input {
   font-size: 32px;
   text-align: center;
+  width: 100%;
+  color: white;
+  background: transparent;
+  border: 1px solid;
+}
+
+.header-title-input:focus-visible {
+  background-color: transparent;
+  color: white;
+  outline: unset;
+  border: 1px solid;
 }
 
 #editable-header {
@@ -31,6 +52,7 @@
 
 .list-container {
   padding-inline-start: unset;
+  margin-bottom: 40px;
 }
 
 .list-item {
@@ -42,7 +64,7 @@
 }
 
 .list-item:hover {
-  border-color: green;
+  border-color: #ffc107;
 }
 
 .name {
@@ -54,11 +76,17 @@
 }
 
 .delete {
-  background-color: red;
+  background-color: transparent;
   padding: 5px;
   color: white;
   cursor: pointer;
   border-radius: 5px;
+  border: 1px solid;
+  font-weight: lighter;
+}
+
+.delete:hover {
+  border-color: #ffc107;
 }
 
 .form {
@@ -67,14 +95,30 @@
 }
 
 .input {
-  padding: 7px 0 7px 7px;
+  padding: 7px;
+  color: white;
+  background-color: transparent;
+  border: 1px solid white;
+  border-radius: 5px 0 0 5px;
+  min-width: 250px;
+  font-size: 16px;
+}
+
+.input:focus-visible {
+  outline: unset;
 }
 
 .add-button {
-  background-color: green;
+  background-color: transparent;
   color: white;
-  padding: 5px;
-  border: unset;
+  padding: 5px 10px;
   cursor: pointer;
-  border-radius: 0 3px 3px 0;
+  border: 1px solid;
+  border-radius: 0 5px 5px 0;
+  border-left: unset;
+  font-weight: lighter;
+}
+
+.add-button:hover {
+  border-color: #ffc107;
 }
