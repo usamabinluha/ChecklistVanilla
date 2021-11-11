@@ -1,243 +1,93 @@
+let id              = 0;
+let ids             = [];
+const addButton     = document.querySelector('.add-button');
+const inputText     = document.querySelector('.input');
+const listContainer = document.querySelector('.students-list');
 
-document.addEventListener('DOMContentLoaded', () => {
+const domStore      = {}
+let onSave;
 
-  const store = {}  
-  let keys = []
-  let id = 0
+inputText.focus()
 
-  const inputText = document.querySelector('input[type="text"]')
+function onAdd (event) {
+  event.preventDefault()
+  const name        = inputText.value;
+  const studentItem = new StudentItem(++id, name, onDelete, onEdit);
+  addItem(id, studentItem);
+  inputText.value   = ''
+  saveState()
+}
 
-  const list = document.querySelector('.students-list')
-  list.addEventListener('click', onListItemClick)
+addButton.addEventListener('click', onAdd)
 
-  const addButton = document.querySelector('.add-button')
+resumeState()
+
+function onDelete (id) {
+  deleteItem(id);
+  inputText.focus();
+  saveState()
+}
+
+function onEdit (id) {
+  addButton.removeEventListener('click', onAdd)
+  onSave = (event) => {
+    onSaveCallback(event, id)
+  }
+  addButton.addEventListener('click', onSave)
+  addButton.textContent = 'Save'
+  const studentItem = domStore[id]
+  inputText.value   = studentItem.getName()
+  inputText.focus()
+}
+
+function onSaveCallback (event, id) {
+  event.preventDefault()
+  const studentItem = domStore[id];
+  const name        = inputText.value;
+  studentItem.setName(name)
+  updateItem(id)
+  inputText.value   = ''
+  addButton.textContent = 'Add'
+  addButton.removeEventListener('click', onSave)
   addButton.addEventListener('click', onAdd)
+}
 
-  initListFromStore()
-
-  function initListFromStore () {
-
-      if(localStorage.getItem('student_ids')){
-
-      const string = localStorage.getItem('student_ids') 
-      keys = JSON.parse(string)
-      
-      keys.forEach(key => {
-        initListItem(key)
-      });
-
-      lastId = keys[keys.length - 1]
-      id = lastId + 1
-
-    }
-
+function addItem (id, item) {
+  if(!ids.includes(id)){
+    ids.push(id);
   }
+  listContainer.appendChild(item.getDOM())
+  domStore[id] = item;
+  localStorage.setItem(id, item.getName())
+}
 
-  function onListItemClick (event) {
-    if(event.target.className === 'delete'){
-      onDelete(event)
-    } else if(event.target.className === 'name'){
-      onEdit(event)
-    }
+function updateItem (id) {
+  const studentItem = domStore[id]
+  localStorage.setItem(id, studentItem.getName())
+}
+
+function deleteItem (id) {
+  const indexToBeDeleted = ids.indexOf(id)
+  ids.splice(indexToBeDeleted, 1);
+  const studentItem = domStore[id]
+  listContainer.removeChild(studentItem.getDOM())
+  delete domStore[id];
+  localStorage.removeItem(id)
+}
+
+function saveState () {
+  localStorage.setItem('student_ids', JSON.stringify(ids))
+}
+
+function resumeState () {
+  if(localStorage.getItem('student_ids')){
+    const studentIds = localStorage.getItem('student_ids')
+    ids = JSON.parse(studentIds)
+    ids.forEach(id => {
+      const name = localStorage.getItem(id);
+      const studentItem = new StudentItem(id, name, onDelete, onEdit);
+      addItem(id, studentItem);
+    });
+    id = ids.length ? ids[ids.length - 1] : 0
   }
-
-  function onAdd (event) {
-
-    event.preventDefault()
-      
-    const name = document.createElement('span')
-    const value = inputText.value
-    name.textContent = value
-    name.classList.add('name')
-    
-    const button = document.createElement('span')
-    button.textContent = 'Delete'
-    button.classList.add('delete')
-    
-    const li = document.createElement('li')
-    li.classList.add('student-item')
-    li.appendChild(name)
-    li.appendChild(button)
-    list.appendChild(li)
-
-    inputText.value = ''
-    keys.push(id)
-    updateStoreIDs()
-    localStorage.setItem(id + '', value)
-    addDom(li, id)
-    id++
-  
-  }
-
-  function getID(dom) {
-    return store[dom]
-  }
-
-  function updateStoreIDs () {
-    localStorage.setItem('student_ids', JSON.stringify(keys))
-  }
-
-  function initListItem(key) {
-
-    if(localStorage.getItem(key)){
-      const name = document.createElement('span')
-      name.textContent = localStorage.getItem(key)
-      name.classList.add('name')
-      
-      const button = document.createElement('span')
-      button.textContent = 'Delete'
-      button.classList.add('delete')
-      
-      
-      const li = document.createElement('li')
-      li.classList.add('student-item')
-      li.appendChild(name)
-      li.appendChild(button)
-    
-      list.appendChild(li)
-      addDom(li, key)
-    }
-    
-  }
-
-  function addDom(dom, id) {
-    store[dom] = id
-  }
-
-  function onDelete (event) {
-    const li = event.target.parentElement;
-    li.parentNode.removeChild(li)
-
-    const key = getID(li)
-    localStorage.removeItem(key + '')
-    keys.splice(key, 1)
-    updateStoreIDs()
-
-    delete store[li]
-  }
-
-  function onEdit (event) {
-    const name = event.target.textContent
-      inputText.value = name
-      inputText.focus()
-      addButton.textContent = 'Save'
-
-      addButton.removeEventListener('click', onAdd)
-      addButton.addEventListener('click', onSave)
-
-      function onSave(onSaveEvent) {
-        onSaveEvent.preventDefault()
-        event.target.textContent = inputText.value
-        addButton.removeEventListener('click', onSave)
-        addButton.addEventListener('click', onAdd)
-        addButton.textContent = 'Add'
-        inputText.value = ''
-
-        const id = getID(event.target.parentNode)
-        localStorage.setItem(id, event.target.textContent)
-        
-      }
-  }
-
-})
-
-
-
-
-
-
-
-
-
-
-
-// document.querySelector('.grand-parent').addEventListener('click', e => {
-//   console.log('grand parent')
-//   e.stopPropagation()
-// }, { capture: false })
-// document.querySelector('.parent').addEventListener('click', e => {
-//   console.log('parent')
-//   e.stopPropagation()
-// }, { capture: false })
-// document.querySelector('.child').addEventListener('click', e => {
-//   console.log('child')
-//   alert('Hi! zulfa')
-//   e.stopPropagation()
-// })
-
-// var students = [
-//   {
-//     name: "jahir",
-//     age: 14,
-//     attendance: 20,
-//     black_points: 3
-//   },
-//   {
-//     name: "Ibraaheem",
-//     age: 15,
-//     attendance: 10,
-//     black_points: 30
-//   }
-// ]
-
-// function getAttendance (id, students){
-//   const student = students[id]
-//   const attendance = student.attendance
-//   console.log(`${student.name}'s attendance is ${attendance}`)
-// }
-
-
-//promise
-// function fetchStart() {
-//   return new Promise((resolve, reject) => {
-//     setTimeout(() => {
-//       resolve('start')
-//     }, 1000)
-//   })
-// }
-
-// fetchStart()
-// .then((message) => {
-//   console.log(message)
-//   return new Promise((resolve, reject) => {
-//     setTimeout(() => {
-//       resolve('middle1')
-//     }, 1000)
-//   })
-// })
-// .then((message) => {
-//   console.log(message)
-//   return new Promise((resolve, reject) => {
-//     setTimeout(() => {
-//       resolve('middle2')
-//     }, 1000)
-//   })
-// })
-// .then((message) => {
-//   console.log(message)
-//   return new Promise((resolve, reject) => {
-//     setTimeout(() => {
-//       resolve('middle3')
-//     }, 1000)
-//   })
-// })
-// .then((message) => {
-//   console.log(message)
-//   return new Promise((resolve, reject) => {
-//     setTimeout(() => {
-//       resolve('end')
-//     }, 1000)
-//   })
-// })
-// .then((message) => console.log(message))
-
-
-// var data = {name: "usama"}
-// setTimeout(() => {
-//   console.log(data)
-//   data.name = "zulfa"
-// }, 1000)
-// // data = {name: "zeenath"}
-// setTimeout(() => {
-//   console.log(data)
-// }, 2000)
+}

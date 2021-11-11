@@ -8,26 +8,31 @@
   <title>Students</title>
 </head>
 <body>
-  <template id="list-item-template">
-    <li class="student-item">
-        <span class="name"></span>
-        <span class="delete">Delete</span>
-      </li>
-  </template>
   <div class="wrapper">
     <div class="header">
       <h1 class="header-title">Students</h1>
     </div>
-    <div id="super-container">
-      <ul class="students-list"></ul>
-      <form id="add-student-form" class="form">
+    <div class="body">
+      <ul class="students-list">
+        <!-- <li class="student-item">
+          <span class="name">Jahir</span>
+          <span class="delete">Delete</span>
+        </li>
+        <li class="student-item">
+          <span class="name">Ibraaheem</span>
+          <span class="delete">Delete</span>
+        </li>
+        <li class="student-item">
+          <span class="name">Zakariyya</span>
+          <span class="delete">Delete</span>
+        </li> -->
+      </ul>
+      <form id="add-student" class="form">
         <input class="input" type="text" placeholder="Enter a student">
         <button class="add-button">Add</button>
       </form>
     </div>
   </div>
-  <script src="GetTemplate.js"></script>
-  <script src="StudentItem.js"></script>
   <script src="app.js"></script>
 </body>
 </html>
