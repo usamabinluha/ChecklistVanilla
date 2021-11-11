@@ -14,31 +14,80 @@ let onSave;
 
 resumeState()
 
-header.textContent = title;
-headerContainer.appendChild(header);
+function resumeState () {
+  if(localStorage.getItem('item_ids')){
+    const itemIds     = localStorage.getItem('item_ids')
+    ids = JSON.parse(itemIds)
+    ids.forEach(id => {
+      const name      = localStorage.getItem(id);
+      const listItem  = new ListItem(id, name, onDelete, onEdit);
+      addItem(id, listItem);
+    });
+    id = ids.length ? ids[ids.length - 1] : 0
+  }
 
-headerContainer.addEventListener('dblclick', () => {
-  headerContainer.removeChild(header);
-  editable.value = header.textContent;
-  headerContainer.appendChild(editableHeader);
-  editable.select()
-  editableHeader.addEventListener('keyup', (event) => {
-    if(event.keyCode === 13){
+  if(localStorage.getItem('title')){
+    title = localStorage.getItem('title');
+  }
+
+  initTitle()
+  inputText.focus()
+}
+
+function initTitle () {
+  header.textContent = title;
+  headerContainer.appendChild(header);
+  header.addEventListener('dblclick', onEditTitle)
+}
+
+function onEditTitle (event) {
+  if(event.target === header){
+
+    event.stopPropagation()
+
+    headerContainer.removeChild(header);
+    editable.value = header.textContent;
+    headerContainer.appendChild(editableHeader);
+    editable.select()
+
+    editable.addEventListener('keyup', onKeyup)
+    editable.addEventListener('blur', onBlur)
+
+    function onKeyup (event) {
       event.preventDefault()
-      header.textContent = editable.value;
-      localStorage.setItem('title', editable.value)
-      headerContainer.appendChild(header);
-      headerContainer.removeChild(editableHeader);
+      if(event.keyCode === 13){
+        header.textContent  = editable.value;
+        title               = editable.value
+        localStorage.setItem('title', editable.value)
+        editable.value      = ''
+        headerContainer.removeChild(editableHeader);
+        headerContainer.appendChild(header);
+      }
+      else if(event.keyCode === 27){
+        header.textContent  = title;
+        editable.value      = ''
+        headerContainer.removeChild(editableHeader);
+        headerContainer.appendChild(header);
+      }
     }
-  })
-})
 
-inputText.focus()
+    function onBlur (event) {
+      event.preventDefault()
+      if(editable.value){
+        headerContainer.removeChild(editableHeader);
+        header.textContent = title;
+        headerContainer.appendChild(header);
+      }
+      editable.removeEventListener('blur', onBlur)
+      editable.removeEventListener('keyup', onKeyup)
+    }
+  }
+}
 
 function onAdd (event) {
   event.preventDefault()
   const name        = inputText.value;
-  const listItem = new ListItem(++id, name, onDelete, onEdit);
+  const listItem    = new ListItem(++id, name, onDelete, onEdit);
   addItem(id, listItem);
   inputText.value   = ''
   saveState()
@@ -59,18 +108,18 @@ function onEdit (id) {
   }
   addButton.addEventListener('click', onSave)
   addButton.textContent = 'Save'
-  const listItem = domStore[id]
-  inputText.value   = listItem.getName()
+  const listItem        = domStore[id]
+  inputText.value       = listItem.getName()
   inputText.focus()
 }
 
 function onSaveCallback (event, id) {
   event.preventDefault()
-  const listItem = domStore[id];
-  const name        = inputText.value;
+  const listItem        = domStore[id];
+  const name            = inputText.value;
   listItem.setName(name)
   updateItem(id)
-  inputText.value   = ''
+  inputText.value       = ''
   addButton.textContent = 'Add'
   addButton.removeEventListener('click', onSave)
   addButton.addEventListener('click', onAdd)
@@ -91,9 +140,9 @@ function updateItem (id) {
 }
 
 function deleteItem (id) {
-  const indexToBeDeleted = ids.indexOf(id)
+  const indexToBeDeleted  = ids.indexOf(id)
   ids.splice(indexToBeDeleted, 1);
-  const listItem = domStore[id]
+  const listItem          = domStore[id]
   listContainer.removeChild(listItem.getDOM())
   delete domStore[id];
   localStorage.removeItem(id)
@@ -101,21 +150,4 @@ function deleteItem (id) {
 
 function saveState () {
   localStorage.setItem('item_ids', JSON.stringify(ids))
-}
-
-function resumeState () {
-  if(localStorage.getItem('item_ids')){
-    const itemIds = localStorage.getItem('item_ids')
-    ids = JSON.parse(itemIds)
-    ids.forEach(id => {
-      const name = localStorage.getItem(id);
-      const listItem = new ListItem(id, name, onDelete, onEdit);
-      addItem(id, listItem);
-    });
-    id = ids.length ? ids[ids.length - 1] : 0
-  }
-
-  if(localStorage.getItem('title')){
-    title = localStorage.getItem('title');
-  }
 }
