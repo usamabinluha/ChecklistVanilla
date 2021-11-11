@@ -2,7 +2,7 @@ let id              = 0;
 let ids             = [];
 const addButton     = document.querySelector('.add-button');
 const inputText     = document.querySelector('.input');
-const listContainer = document.querySelector('.students-list');
+const listContainer = document.querySelector('.list-container');
 
 const domStore      = {}
 let onSave;
@@ -12,8 +12,8 @@ inputText.focus()
 function onAdd (event) {
   event.preventDefault()
   const name        = inputText.value;
-  const studentItem = new StudentItem(++id, name, onDelete, onEdit);
-  addItem(id, studentItem);
+  const listItem = new ListItem(++id, name, onDelete, onEdit);
+  addItem(id, listItem);
   inputText.value   = ''
   saveState()
 }
@@ -35,16 +35,16 @@ function onEdit (id) {
   }
   addButton.addEventListener('click', onSave)
   addButton.textContent = 'Save'
-  const studentItem = domStore[id]
-  inputText.value   = studentItem.getName()
+  const listItem = domStore[id]
+  inputText.value   = listItem.getName()
   inputText.focus()
 }
 
 function onSaveCallback (event, id) {
   event.preventDefault()
-  const studentItem = domStore[id];
+  const listItem = domStore[id];
   const name        = inputText.value;
-  studentItem.setName(name)
+  listItem.setName(name)
   updateItem(id)
   inputText.value   = ''
   addButton.textContent = 'Add'
@@ -62,31 +62,31 @@ function addItem (id, item) {
 }
 
 function updateItem (id) {
-  const studentItem = domStore[id]
-  localStorage.setItem(id, studentItem.getName())
+  const listItem = domStore[id]
+  localStorage.setItem(id, listItem.getName())
 }
 
 function deleteItem (id) {
   const indexToBeDeleted = ids.indexOf(id)
   ids.splice(indexToBeDeleted, 1);
-  const studentItem = domStore[id]
-  listContainer.removeChild(studentItem.getDOM())
+  const listItem = domStore[id]
+  listContainer.removeChild(listItem.getDOM())
   delete domStore[id];
   localStorage.removeItem(id)
 }
 
 function saveState () {
-  localStorage.setItem('student_ids', JSON.stringify(ids))
+  localStorage.setItem('item_ids', JSON.stringify(ids))
 }
 
 function resumeState () {
-  if(localStorage.getItem('student_ids')){
-    const studentIds = localStorage.getItem('student_ids')
-    ids = JSON.parse(studentIds)
+  if(localStorage.getItem('item_ids')){
+    const itemIds = localStorage.getItem('item_ids')
+    ids = JSON.parse(itemIds)
     ids.forEach(id => {
       const name = localStorage.getItem(id);
-      const studentItem = new StudentItem(id, name, onDelete, onEdit);
-      addItem(id, studentItem);
+      const listItem = new ListItem(id, name, onDelete, onEdit);
+      addItem(id, listItem);
     });
     id = ids.length ? ids[ids.length - 1] : 0
   }

@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const inputText = document.querySelector('input[type="text"]')
 
-  const list = document.querySelector('.students-list')
+  const list = document.querySelector('.list-container')
   list.addEventListener('click', onListItemClick)
 
   const addButton = document.querySelector('.add-button')
@@ -17,9 +17,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function initListFromStore () {
 
-      if(localStorage.getItem('student_ids')){
+      if(localStorage.getItem('item_ids')){
 
-      const string = localStorage.getItem('student_ids') 
+      const string = localStorage.getItem('item_ids') 
       keys = JSON.parse(string)
       
       keys.forEach(key => {
@@ -55,7 +55,7 @@ document.addEventListener('DOMContentLoaded', () => {
     button.classList.add('delete')
     
     const li = document.createElement('li')
-    li.classList.add('student-item')
+    li.classList.add('list-item')
     li.appendChild(name)
     li.appendChild(button)
     list.appendChild(li)
@@ -74,7 +74,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function updateStoreIDs () {
-    localStorage.setItem('student_ids', JSON.stringify(keys))
+    localStorage.setItem('item_ids', JSON.stringify(keys))
   }
 
   function initListItem(key) {
@@ -90,7 +90,7 @@ document.addEventListener('DOMContentLoaded', () => {
       
       
       const li = document.createElement('li')
-      li.classList.add('student-item')
+      li.classList.add('list-item')
       li.appendChild(name)
       li.appendChild(button)
     
@@ -165,7 +165,7 @@ document.addEventListener('DOMContentLoaded', () => {
 //   e.stopPropagation()
 // })
 
-// var students = [
+// var items = [
 //   {
 //     name: "jahir",
 //     age: 14,
@@ -180,10 +180,10 @@ document.addEventListener('DOMContentLoaded', () => {
 //   }
 // ]
 
-// function getAttendance (id, students){
-//   const student = students[id]
-//   const attendance = student.attendance
-//   console.log(`${student.name}'s attendance is ${attendance}`)
+// function getAttendance (id, items){
+//   const item = items[id]
+//   const attendance = item.attendance
+//   console.log(`${item.name}'s attendance is ${attendance}`)
 // }
 
 

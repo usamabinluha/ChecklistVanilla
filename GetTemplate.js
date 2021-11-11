@@ -1,7 +1,7 @@
-function GetTemplate(id) {
+function getTemplate(id) {
   const template = document.getElementById(id);
   const content = template.content;
   return content.cloneNode(true)
 }
 
-window.getTemplate = GetTemplate;
+window.getTemplate = getTemplate;
